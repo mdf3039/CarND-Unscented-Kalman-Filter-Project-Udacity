@@ -67,6 +67,21 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
+  ///* previous velocity in x and y directions
+  double previous_velocity_x;
+  double previous_velocity_y;
+  double previous_velocity;
+
+  ///* previous yaw and yaw rate
+  double previous_yaw;
+  double previous_yaw_rate;
+
+  ///* previous change in time
+  double previous_dt;
+
+  ///* first observation after initialization boolean check
+  bool first_observation;
+
 
   /**
    * Constructor
@@ -89,7 +104,7 @@ public:
    * matrix
    * @param delta_t Time between k and k+1 in s
    */
-  void Prediction(double delta_t);
+  void Prediction(MeasurementPackage meas_package);
 
   /**
    * Updates the state and the state covariance matrix using a laser measurement
