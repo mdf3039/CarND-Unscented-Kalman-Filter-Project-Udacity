@@ -19,7 +19,7 @@ UKF::UKF() {
 
   // initial state vector
   x_ = VectorXd(5);
-  x_ = 0,0,0,0,0;
+  x_ << 0,0,0,0,0;
   // initial covariance matrix
   P_ = MatrixXd(5, 5);
   P_ << 1,0,0,0,0,
@@ -77,18 +77,18 @@ UKF::UKF() {
   //previous velocity in x and y
   previous_velocity_x = 3.67;
   previous_velocity_y = 1.74;
-  previous_velocity = sqrt(pow(previous_velocity_x,2)+pow(previous_velocity_y,2))
+  previous_velocity = sqrt(pow(previous_velocity_x,2)+pow(previous_velocity_y,2));
 
   //previous yaw and yaw rate
   previous_yaw = 0.000954;
   previous_yaw_rate = 0.0;
 
   //weights of the sigma points
-  weights_ = VectorXd(2*n_aug+1);
-  double weight_0 = lambda/(lambda+n_aug);
+  weights_ = VectorXd(2*n_aug_+1);
+  double weight_0 = lambda_/(lambda_+n_aug_);
   weights_(0) = weight_0;
-  for (int i=1; i<2*n_aug+1; i++) {
-    double weight = 0.5/(n_aug+lambda);
+  for (int i=1; i<2*n_aug_+1; i++) {
+    double weight = 0.5/(n_aug_+lambda_);
     weights_(i) = weight;
   }
 
@@ -100,7 +100,7 @@ UKF::~UKF() {}
  * @param {MeasurementPackage} meas_package The latest measurement data of
  * either radar or laser.
  */
-void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
+void UKF::ProcessMeasurement(MeasurementPackage measurement_pack) {
   /**
   TODO:
 
@@ -116,7 +116,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     time_us_ = measurement_pack.timestamp_;
     previous_velocity_x = 3.67;
     previous_velocity_y = 1.74;
-    previous_velocity = sqrt(pow(previous_velocity_x,2)+pow(previous_velocity_y,2))
+    previous_velocity = sqrt(pow(previous_velocity_x,2)+pow(previous_velocity_y,2));
     previous_yaw = 0.000954;
     previous_yaw_rate = 0.0;
     previous_dt = 0.1;
@@ -145,7 +145,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   }
   //if it is not the first measurement, process the measurement.
   //predict given the dt and update based on whether lidar or radar
-  Prediction();
+  Prediction(MeasurementPackage meas_package);
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
     UpdateRadar(measurement_pack);
   }
@@ -193,8 +193,8 @@ void UKF::Prediction(MeasurementPackage meas_package) {
   Xsig_aug.col(0)  = x_aug;
   for (int i = 0; i< n_aug_; i++)
   {
-    Xsig_aug.col(i+1)       = x_aug + sqrt(lambda+n_aug_) * L.col(i);
-    Xsig_aug.col(i+1+n_aug_) = x_aug - sqrt(lambda+n_aug_) * L.col(i);
+    Xsig_aug.col(i+1)       = x_aug + sqrt(lambda_+n_aug_) * A.col(i);
+    Xsig_aug.col(i+1+n_aug_) = x_aug - sqrt(lambda_+n_aug_) * A.col(i);
   }
 
   //use augmented sigma point matrix to predict sigma points
