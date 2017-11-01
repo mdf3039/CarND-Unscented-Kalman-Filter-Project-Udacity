@@ -67,6 +67,12 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
+  ///* NIS for laser
+  double NIS_laser_;
+
+  ///* NIS for radar
+  double NIS_radar_;
+
   ///* previous velocity in x and y directions
   double previous_velocity_x;
   double previous_velocity_y;
