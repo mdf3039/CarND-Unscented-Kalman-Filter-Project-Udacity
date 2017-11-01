@@ -145,7 +145,7 @@ void UKF::ProcessMeasurement(MeasurementPackage measurement_pack) {
   }
   //if it is not the first measurement, process the measurement.
   //predict given the dt and update based on whether lidar or radar
-  Prediction(MeasurementPackage measurement_pack);
+  Prediction(measurement_pack);
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
     UpdateRadar(measurement_pack);
   }
