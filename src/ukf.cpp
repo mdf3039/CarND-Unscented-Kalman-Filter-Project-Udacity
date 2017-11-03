@@ -27,6 +27,7 @@ UKF::UKF() {
         0,0,1,0,0,
         0,0,0,1,0,
         0,0,0,0,1;
+  P = P/2.0
   // Process noise standard deviation longitudinal acceleration in m/s^2
   std_a_ = .5;
 
@@ -399,8 +400,8 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     Zsig(2,i) = (p_x*v1 + p_y*v2 ) / sqrt(p_x*p_x + p_y*p_y);   //r_dot
     //normalize all angles in Zsig
     //angle normalization
-    while (Zsig(1)> M_PI) Zsig(1)-=2.*M_PI;
-    while (Zsig(1)<-M_PI) Zsig(1)+=2.*M_PI;
+    while (Zsig(1,i)> M_PI) Zsig(1,i)-=2.*M_PI;
+    while (Zsig(1,i)<-M_PI) Zsig(1,i)+=2.*M_PI;
   }
   cout<<"Translated measurements used in radar: "<<Zsig<<endl;
   //mean predicted measurement
