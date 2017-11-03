@@ -276,8 +276,8 @@ void UKF::Prediction(MeasurementPackage meas_package) {
     while (x_diff(3)<-M_PI) x_diff(3)+=2.*M_PI;
 
     P_ = P_ + weights_(i) * x_diff * x_diff.transpose() ;
-  cout<<"New P based on given predicted sigma points: "<<P_<<endl;
   }
+  cout<<"New P based on given predicted sigma points: "<<P_<<endl;
 
 
 }
@@ -353,6 +353,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   VectorXd z = VectorXd(n_z);
   z << meas_package.raw_measurements_[0],
         meas_package.raw_measurements_[1];
+  cout<<"Actual: "<<z<<endl;
   VectorXd z_diff = z - z_pred;
   cout<<"Residual: "<<z_diff<<endl;
 
@@ -396,6 +397,10 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     Zsig(0,i) = sqrt(p_x*p_x + p_y*p_y);                        //r
     Zsig(1,i) = atan2(p_y,p_x);                                 //phi
     Zsig(2,i) = (p_x*v1 + p_y*v2 ) / sqrt(p_x*p_x + p_y*p_y);   //r_dot
+    //normalize all angles in Zsig
+    //angle normalization
+    while (Zsig(1)> M_PI) Zsig(1)-=2.*M_PI;
+    while (Zsig(1)<-M_PI) Zsig(1)+=2.*M_PI;
   }
   cout<<"Translated measurements used in radar: "<<Zsig<<endl;
   //mean predicted measurement
@@ -454,6 +459,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   z << meas_package.raw_measurements_[0],
         meas_package.raw_measurements_[1],
         meas_package.raw_measurements_[2];
+  cout<<"Actual: "<<z<<endl;
   VectorXd z_diff = z - z_pred;
   cout<<"Residual: "<<z_diff<<endl;
 
