@@ -6,7 +6,7 @@
 #include "tools.h"
 
 using namespace std;
-
+freopen( "review_output.txt", "w", stdout );
 // for convenience
 using json = nlohmann::json;
 

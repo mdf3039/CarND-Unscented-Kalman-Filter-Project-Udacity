@@ -203,13 +203,13 @@ void UKF::Prediction(MeasurementPackage meas_package) {
     Xsig_aug.col(i+1)       = x_aug + sqrt(lambda_+n_aug_) * A.col(i);
     Xsig_aug.col(i+1+n_aug_) = x_aug - sqrt(lambda_+n_aug_) * A.col(i);
   }
-  //Make sure the yaw angle is between -pi and pi
+  /*//Make sure the yaw angle is between -pi and pi
   //angle normalization
   for (int i=0;i<2*n_aug_+1;i++){
     while (Xsig_aug(3,i)> M_PI) Xsig_aug(3,i)-=2.*M_PI;
     while (Xsig_aug(3,i)<-M_PI) Xsig_aug(3,i)+=2.*M_PI;
   }
-
+  */
   //use augmented sigma point matrix to predict sigma points
   for (int i = 0; i< 2*n_aug_+1; i++)
   {
@@ -248,13 +248,13 @@ void UKF::Prediction(MeasurementPackage meas_package) {
     Xsig_pred_(3,i) = yaw_p;
     Xsig_pred_(4,i) = yawd_p;
   }
-  //normalize the yaw angle for the predicted sigma points
+  /*//normalize the yaw angle for the predicted sigma points
   //angle normalization
   for (int i=0;i<2*n_aug_+1;i++){
     while (Xsig_pred_(3,i)> M_PI) Xsig_pred_(3,i)-=2.*M_PI;
     while (Xsig_pred_(3,i)<-M_PI) Xsig_pred_(3,i)+=2.*M_PI;
   }
-
+  */
 
   //using the predicted sigma points, predict and rewrite x_ and P_
   //predicted state mean
