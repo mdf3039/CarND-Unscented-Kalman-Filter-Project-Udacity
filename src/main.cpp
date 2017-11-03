@@ -94,10 +94,14 @@ int main()
     	  float y_gt;
     	  float vx_gt;
     	  float vy_gt;
+    	  float yaw_gt;
+    	  float yawr_gt;
     	  iss >> x_gt;
     	  iss >> y_gt;
     	  iss >> vx_gt;
     	  iss >> vy_gt;
+    	  iss >> yaw_gt;
+    	  iss >> yawr_gt;
     	  VectorXd gt_values(4);
     	  gt_values(0) = x_gt;
     	  gt_values(1) = y_gt;
@@ -114,6 +118,12 @@ int main()
           } else if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
               cout << ukf.NIS_radar_ << "\n";
           }
+          cout << "X,actual"<<ukf.x_[0]<<","<<gt_values(0)<<endl;
+          cout << "Y,actual"<<ukf.x_[1]<<","<<gt_values(1)<<endl;
+          cout << "VX,actual"<<cos(ukf.x_[3])*ukf.x_[2]<<","<<gt_values(2)<<endl;
+          cout << "VY,actual"<<sin(ukf.x_[3])*ukf.x_[2]<<","<<gt_values(3)<<endl;
+          cout << "Yaw,actual"<<ukf.x_[3]<<","<<yaw_gt<<endl;
+          cout << "YawR,actual"<<ukf.x_[4]<<","<<yawr_gt<<endl;
 
     	  //Push the current estimated x,y positon from the Kalman filter's state vector
 
