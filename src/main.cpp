@@ -109,9 +109,9 @@ int main()
     	  ukf.ProcessMeasurement(meas_package);
 
     	  // output the NIS values
-          if (measurement_pack_list[k].sensor_type_ == MeasurementPackage::LASER) {
+          if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
               cout << ukf.NIS_laser_ << "\n";
-          } else if (measurement_pack_list[k].sensor_type_ == MeasurementPackage::RADAR) {
+          } else if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
               cout << ukf.NIS_radar_ << "\n";
           }
 
