@@ -75,13 +75,13 @@ UKF::UKF() {
   lambda_ = 3 - n_aug_;
 
   //previous velocity in x and y
-  previous_velocity_x = 3.67;
-  previous_velocity_y = 1.74;
+  previous_velocity_x = 5.199937;
+  previous_velocity_y = 0.0;
   previous_velocity = sqrt(pow(previous_velocity_x,2)+pow(previous_velocity_y,2));
 
   //previous yaw and yaw rate
-  previous_yaw = 0.000954;
-  previous_yaw_rate = 0.0;
+  previous_yaw = 0.0;
+  previous_yaw_rate = 0.006911322;
 
   //weights of the sigma points
   weights_ = VectorXd(2*n_aug_+1);
@@ -118,11 +118,11 @@ void UKF::ProcessMeasurement(MeasurementPackage measurement_pack) {
     // first measurement
     cout << "UKF: " << endl;
     time_us_ = measurement_pack.timestamp_;
-    previous_velocity_x = 3.67;
-    previous_velocity_y = 1.74;
+    previous_velocity_x = 5.199937;
+    previous_velocity_y = 0.0;
     previous_velocity = sqrt(pow(previous_velocity_x,2)+pow(previous_velocity_y,2));
-    previous_yaw = 0.000954;
-    previous_yaw_rate = 0.0;
+    previous_yaw = 0.0;
+    previous_yaw_rate = 0.006911322;
     previous_dt = 0.1;
     first_observation = true;
 
