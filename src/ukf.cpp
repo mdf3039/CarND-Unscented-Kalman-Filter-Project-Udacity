@@ -27,7 +27,7 @@ UKF::UKF() {
         0,0,1,0,0,
         0,0,0,1,0,
         0,0,0,0,1;
-  P = P/2.0
+  P_ = P_/2.0;
   // Process noise standard deviation longitudinal acceleration in m/s^2
   std_a_ = .5;
 
