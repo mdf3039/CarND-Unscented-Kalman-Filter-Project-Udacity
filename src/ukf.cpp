@@ -31,7 +31,7 @@ UKF::UKF() {
   std_a_ = .5;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = .02;
+  std_yawdd_ = .9;
 
   // Laser measurement noise standard deviation position1 in m
   std_laspx_ = 0.15;
@@ -174,12 +174,14 @@ void UKF::Prediction(MeasurementPackage meas_package) {
   //compute the time elapsed between the current and previous measurements
   float dt = (meas_package.timestamp_ - time_us_) / 1000000.0;	//dt - expressed in seconds
   time_us_ = meas_package.timestamp_;
+  cout << "DeltaTime: "<<dt<<endl;
 
   //augment x_ and the acceleration and yaw_acceleration
   float acc_vel = (previous_velocity-x_[2])/dt;
   float acc_yaw = (previous_yaw_rate-x_[4])/dt;
   VectorXd x_aug = VectorXd(n_aug_);
   x_aug << x_[0],x_[1],x_[2],x_[3],x_[4],acc_vel,acc_yaw;
+  cout<<"Augmented X: "<<x_aug<<endl;
   //set the previous velocity and yaw_rate
   previous_velocity = x_[2];
   previous_yaw_rate = x_[4];
@@ -189,6 +191,7 @@ void UKF::Prediction(MeasurementPackage meas_package) {
   P_aug.topLeftCorner(5,5) = P_;
   P_aug(5,5) = std_a_*std_a_;
   P_aug(6,6) = std_yawdd_*std_yawdd_;
+  cout<<"Augmented Covariance Matrix: "<<P_aug<<endl;
   //create square root matrix
   MatrixXd A = P_aug.llt().matrixL();
 
@@ -199,6 +202,12 @@ void UKF::Prediction(MeasurementPackage meas_package) {
   {
     Xsig_aug.col(i+1)       = x_aug + sqrt(lambda_+n_aug_) * A.col(i);
     Xsig_aug.col(i+1+n_aug_) = x_aug - sqrt(lambda_+n_aug_) * A.col(i);
+  }
+  //Make sure the yaw angle is between -pi and pi
+  //angle normalization
+  for (int i=0;i<2*n_aug_+1;i++){
+    while (Xsig_aug(3,i)> M_PI) Xsig_aug(3,i)-=2.*M_PI;
+    while (Xsig_aug(3,i)<-M_PI) Xsig_aug(3,i)+=2.*M_PI;
   }
 
   //use augmented sigma point matrix to predict sigma points
@@ -239,6 +248,13 @@ void UKF::Prediction(MeasurementPackage meas_package) {
     Xsig_pred_(3,i) = yaw_p;
     Xsig_pred_(4,i) = yawd_p;
   }
+  //normalize the yaw angle for the predicted sigma points
+  //angle normalization
+  for (int i=0;i<2*n_aug_+1;i++){
+    while (Xsig_pred_(3,i)> M_PI) Xsig_pred_(3,i)-=2.*M_PI;
+    while (Xsig_pred_(3,i)<-M_PI) Xsig_pred_(3,i)+=2.*M_PI;
+  }
+
 
   //using the predicted sigma points, predict and rewrite x_ and P_
   //predicted state mean
