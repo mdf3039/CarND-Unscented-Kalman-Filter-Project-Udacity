@@ -28,10 +28,10 @@ UKF::UKF() {
         0,0,0,1,0,
         0,0,0,0,1;
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 7;
+  std_a_ = .7;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 1.2;
+  std_yawdd_ = .02;
 
   // Laser measurement noise standard deviation position1 in m
   std_laspx_ = 0.15;
@@ -90,6 +90,10 @@ UKF::UKF() {
   for (int i=1; i<2*n_aug_+1; i++) {
     double weight = 0.5/(n_aug_+lambda_);
     weights_(i) = weight;
+
+  //First NIS values will be zero
+  NIS_laser_ = 0.0;
+  NIS_radar_ = 0.0;
   }
 
 }
