@@ -203,6 +203,7 @@ void UKF::Prediction(MeasurementPackage meas_package) {
     Xsig_aug.col(i+1)       = x_aug + sqrt(lambda_+n_aug_) * A.col(i);
     Xsig_aug.col(i+1+n_aug_) = x_aug - sqrt(lambda_+n_aug_) * A.col(i);
   }
+  cout<<"Augmented Sigma Points: "<<Xsig_aug<<endl;
   /*//Make sure the yaw angle is between -pi and pi
   //angle normalization
   for (int i=0;i<2*n_aug_+1;i++){
@@ -248,6 +249,7 @@ void UKF::Prediction(MeasurementPackage meas_package) {
     Xsig_pred_(3,i) = yaw_p;
     Xsig_pred_(4,i) = yawd_p;
   }
+  cout<<"Predicted Sigma Points: "<<Xsig_pred_<<endl;
   /*//normalize the yaw angle for the predicted sigma points
   //angle normalization
   for (int i=0;i<2*n_aug_+1;i++){
@@ -262,6 +264,7 @@ void UKF::Prediction(MeasurementPackage meas_package) {
   for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //iterate over sigma points
     x_ = x_+ weights_(i) * Xsig_pred_.col(i);
   }
+  cout<<"New X based on given predicted sigma points: "<<x_<<endl;
   //predicted state covariance matrix
   P_.fill(0.0);
   for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //iterate over sigma points
@@ -273,6 +276,7 @@ void UKF::Prediction(MeasurementPackage meas_package) {
     while (x_diff(3)<-M_PI) x_diff(3)+=2.*M_PI;
 
     P_ = P_ + weights_(i) * x_diff * x_diff.transpose() ;
+  cout<<"New P based on given predicted sigma points: "<<P_<<endl;
   }
 
 
@@ -291,15 +295,17 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
   You'll also need to calculate the lidar NIS.
   */
-  //set measurement dimension, radar can x and y
+  //set measurement dimension, lidar measures x and y
   int n_z = 2;
   MatrixXd Zsig = Xsig_pred_.topRows(2);
+  cout<<"Top 2 rows for the sigma points used in lidar: "<<Zsig<<endl;
   //mean predicted measurement
   VectorXd z_pred = VectorXd(n_z);
   z_pred.fill(0.0);
   for (int i=0; i < 2*n_aug_+1; i++) {
       z_pred = z_pred + weights_(i) * Zsig.col(i);
   }
+  cout<<"Predicted measurement: "<<z_pred<<endl;
   //measurement covariance matrix S
   MatrixXd S = MatrixXd(n_z,n_z);
   S.fill(0.0);
@@ -313,6 +319,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
     */
     S = S + weights_(i) * z_diff * z_diff.transpose();
   }
+  cout<<"Predicted covariance matrix S: "<<S<<endl;
   //add measurement noise covariance matrix
   MatrixXd R = MatrixXd(n_z,n_z);
   R <<    std_laspx_*std_laspx_, 0,
@@ -347,10 +354,13 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   z << meas_package.raw_measurements_[0],
         meas_package.raw_measurements_[1];
   VectorXd z_diff = z - z_pred;
+  cout<<"Residual: "<<z_diff<<endl;
 
   //update state mean and covariance matrix
   x_ = x_ + K * z_diff;
+  cout<<"Updated X: "<<x_<<endl;
   P_ = P_ - K*S*K.transpose();
+  cout<<"Updated P: "<<P_<<endl;
 
   //calculate the NIS laser
   NIS_laser_ = z_diff.transpose()*S.inverse()*z_diff;
@@ -387,12 +397,14 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     Zsig(1,i) = atan2(p_y,p_x);                                 //phi
     Zsig(2,i) = (p_x*v1 + p_y*v2 ) / sqrt(p_x*p_x + p_y*p_y);   //r_dot
   }
+  cout<<"Translated measurements used in radar: "<<Zsig<<endl;
   //mean predicted measurement
   VectorXd z_pred = VectorXd(n_z);
   z_pred.fill(0.0);
   for (int i=0; i < 2*n_aug_+1; i++) {
       z_pred = z_pred + weights_(i) * Zsig.col(i);
   }
+  cout<<"Predicted measurement: "<<z_pred<<endl;
   //measurement covariance matrix S
   MatrixXd S = MatrixXd(n_z,n_z);
   S.fill(0.0);
@@ -406,6 +418,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
     S = S + weights_(i) * z_diff * z_diff.transpose();
   }
+  cout<<"Predicted covariance matrix S: "<<S<<endl;
   //add measurement noise covariance matrix
   MatrixXd R = MatrixXd(n_z,n_z);
   R <<    std_radr_*std_radr_, 0, 0,
@@ -442,10 +455,13 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
         meas_package.raw_measurements_[1],
         meas_package.raw_measurements_[2];
   VectorXd z_diff = z - z_pred;
+  cout<<"Residual: "<<z_diff<<endl;
 
   //update state mean and covariance matrix
   x_ = x_ + K * z_diff;
+  cout<<"Updated X: "<<x_<<endl;
   P_ = P_ - K*S*K.transpose();
+  cout<<"Updated P: "<<P_<<endl;
 
   //calculate the NIS radar
   NIS_radar_ = z_diff.transpose()*S.inverse()*z_diff;
