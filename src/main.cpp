@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 using namespace std;
-freopen( "review_output.txt", "w", stdout );
+
 // for convenience
 using json = nlohmann::json;
 
@@ -30,6 +30,7 @@ std::string hasData(std::string s) {
 
 int main()
 {
+  freopen( "review_output.txt", "w", stdout );
   uWS::Hub h;
 
   // Create a Kalman Filter instance
