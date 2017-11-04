@@ -76,13 +76,13 @@ UKF::UKF() {
   lambda_ = 3 - n_aug_;
 
   //previous velocity in x and y
-  previous_velocity_x = 5.199937;
+  previous_velocity_x = 0.0;
   previous_velocity_y = 0.0;
   previous_velocity = sqrt(pow(previous_velocity_x,2)+pow(previous_velocity_y,2));
 
   //previous yaw and yaw rate
   previous_yaw = 0.0;
-  previous_yaw_rate = 0.006911322;
+  previous_yaw_rate = 0.0;
 
   //weights of the sigma points
   weights_ = VectorXd(2*n_aug_+1);
@@ -119,12 +119,12 @@ void UKF::ProcessMeasurement(MeasurementPackage measurement_pack) {
     // first measurement
     cout << "UKF: " << endl;
     time_us_ = measurement_pack.timestamp_;
-    previous_velocity_x = 5.199937;
+    previous_velocity_x = 0.0;
     previous_velocity_y = 0.0;
     previous_velocity = sqrt(pow(previous_velocity_x,2)+pow(previous_velocity_y,2));
     previous_yaw = 0.0;
-    previous_yaw_rate = 0.006911322;
-    previous_dt = 0.1;
+    previous_yaw_rate = 0.0;
+    previous_dt = 0.05;
     first_observation = true;
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
@@ -181,7 +181,7 @@ void UKF::Prediction(MeasurementPackage meas_package) {
   float acc_vel = (previous_velocity-x_[2])/dt;
   float acc_yaw = (previous_yaw_rate-x_[4])/dt;
   VectorXd x_aug = VectorXd(n_aug_);
-  x_aug << x_[0],x_[1],x_[2],x_[3],x_[4],acc_vel,acc_yaw;
+  x_aug << x_[0],x_[1],x_[2],x_[3],x_[4],0,0;
   cout<<"Augmented X: "<<x_aug<<endl;
   //set the previous velocity and yaw_rate
   previous_velocity = x_[2];
